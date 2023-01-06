@@ -1,3 +1,3 @@
 # Flipkart-Clone-FullStack
-install npm using below command
+install node modules using below command
 npm i --force
