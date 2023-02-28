@@ -25,7 +25,7 @@
     height: 32rem;
     color: #fff;
     /* letter-spacing: 1px; */
-    background-image: url('./login-image.png');
+    background-image: url('../Images/login-image.png');
     background-color: #2874f0;
     background-repeat: no-repeat;
     background-position: center 85%;
@@ -66,8 +66,9 @@
     outline: 0;
     border-width: 0 0 2px;
     border-color: blue;
-    padding-right: 40%;
+    /* padding-right: 40%; */
     margin-top: 0.7rem;
+    width: 22rem;
     
   }
 .flipkart-login-button{
@@ -230,11 +231,9 @@ overflow-y: hidden;
     display: block;
   }
   
-  /* Change color of dropdown links on hover */
-  .dropdown-content a:hover {background-color: #ddd;}
-  
-  /* Show the dropdown menu on hover */
-  .dropdown:hover .dropdown-content {display: block;}
-  
-  /* Change the background color of the dropdown button when the dropdown content is shown */
-  /* .dropdown:hover .dropbtn {background-color:white;} */
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+.dropdown:hover .dropdown-content {display: block;}
+.toast-message{
+  width: 1200px;
+}

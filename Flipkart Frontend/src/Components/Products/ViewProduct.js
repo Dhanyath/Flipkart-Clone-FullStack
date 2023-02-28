@@ -1,8 +1,10 @@
 import { Button } from '@material-ui/core';
+import axios from 'axios';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import "./ViewProduct.css";
+import { toast, ToastContainer } from 'react-toastify';
+import "../Styles/ViewProduct.css";
 
 const ViewProduct = props => {
     const navigate=useNavigate();
@@ -10,19 +12,29 @@ const ViewProduct = props => {
     const catageories=["Electronics","TVs & Appliances","Men","Women"," Baby & kids","Home & Furniture"," Sports, Books & More"];
     const location=useLocation();
     const product=location.state.selectedProduct;
-    const [tempCart,setTempCart]=useState({})
-    console.log(product)  
-    const addToCart=(e)=>{
-        console.log(product)
-        const tem={};
-        tem[product.productId]=1;
-        console.log(tem)
-        setTempCart(tem)
-        console.log(tempCart)
-        localStorage.setItem("cart",JSON.stringify(tem))
-        navigate("/cart",{
-            state: { selectedProduct: product },
-          })
+    const addToCart=async (e)=>{
+        if(localStorage.getItem("loginstatus")==null){
+            toast.warn("Please login to Continue", {
+                position:"bottom-center",
+                 autoClose: 2500,
+                 hideProgressBar: true,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+                 theme: "colored",
+                   style:{width:"30rem",
+                   fontSize:"12px",
+                   background:'#39393a'
+                 }
+               })   
+        }
+        else{
+            await  axios.get(`http://localhost:2122/cart/add/cart/${2}/${localStorage.getItem("phonenumber")}/${1}`).then((response)=>console.log(response.data))
+            navigate("/cart",{
+                state: { selectedProduct: product },
+              })
+        }
+     
     }
     return (
         <>
@@ -122,15 +134,11 @@ const ViewProduct = props => {
                                </tbody>
                            </table>
                        </div>
-                       
                    </div>
-                    
-                        
-
                 </div>
             </div>
         </div>
-           
+           {/* <ToastContainer/> */}
         </div>
 
         </>

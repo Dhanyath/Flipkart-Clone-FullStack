@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './AllItems.css';
+import '../Styles/AllItems.css';
 // toast.configure()
 const AllItems = props => {
     const catageories=["Electronics","TVs & Appliances","Men","Women"," Baby & kids","Home & Furniture"," Sports, Books & More"];
@@ -20,9 +20,6 @@ const AllItems = props => {
     var [sortOf,setSortOf]=useState(true);
     const [count,setCount]=useState(0)
     const navigate = useNavigate();
-    
-    // let activeSortOption;
-    // let inActiveSortOption;
     var a;
     var b;
     
@@ -32,64 +29,9 @@ const AllItems = props => {
     },[])
     useEffect(()=>{
      axios.get(`http://localhost:2122/product/sort/productsitems/${selectedCatageory}/${activeSortOption}`).then((response)=> setAllProducts(response.data)).catch((error)=>setEmptyProductError(error.response.data.message));
-    //  console.log(allProducts)
      setProductList(allProducts);   
+     console.log(productList)
     },[loadStatus])
-    
-    // console.log(productList)
-//    console.log(productList)
-    // const item1=[{
-    //     id:1,
-    //     name:"REDMI",
-    //     model:"10A",
-    //     color:"Sea Blue",
-    //     ram:"64 GB",
-    //     ratings:"5670",
-    //     reviews:"509",
-    //     actualPrice:"14099",
-    //     offerPrice:"8000",
-    //     features:["16.59 cm (6.53 inch) Display","13MP Rear Camera","5000 mAh Battery","1 Year Manufacturer Warranty"]
-    // },{  id:2,
-    //     name:"REDMI",
-    //     model:"10A",
-    //     color:"Sea Blue",
-    //     ram:"64 GB",
-    //     ratings:"5670",
-    //     reviews:"509",
-    //     actualPrice:"14099",
-    //     offerPrice:"8000",
-    //     features:["16.59 cm (6.53 inch) Display","13MP Rear Camera","5000 mAh Battery","1 Year Manufacturer Warranty"]
-    // },{  id:3,
-    //     name:"REDMI",
-    //     model:"10A",
-    //     color:"Sea Blue",
-    //     ram:"64 GB",
-    //     ratings:"5670",
-    //     reviews:"509",
-    //     actualPrice:"14099",
-    //     offerPrice:"8000",
-    //     features:["16.59 cm (6.53 inch) Display","13MP Rear Camera","5000 mAh Battery","1 Year Manufacturer Warranty"]
-    // },{  id:4,
-    //     name:"REDMI",
-    //     model:"10A",
-    //     color:"Sea Blue",
-    //     ram:"64 GB",
-    //     ratings:"5670",
-    //     reviews:"509",
-    //     actualPrice:"14099",
-    //     offerPrice:"8000",
-    //     features:["16.59 cm (6.53 inch) Display","13MP Rear Camera","5000 mAh Battery","1 Year Manufacturer Warranty"]
-    // },{  id:5,
-    //     name:"REDMI",
-    //     model:"10A",
-    //     color:"Sea Blue",
-    //     ram:"64 GB",
-    //     ratings:"5670",
-    //     reviews:"509",
-    //     actualPrice:"14099",
-    //     offerPrice:"8000",
-    //     features:["16.59 cm (6.53 inch) Display","13MP Rear Camera","5000 mAh Battery","1 Year Manufacturer Warranty"]
-    // }]
     const clickProduct=(e)=>{
         console.log(e.target.id)
         const selectedProduct=allProducts.filter((item)=>item.productId==e.target.id)[0];
@@ -101,7 +43,7 @@ const AllItems = props => {
     }
     const sortOption=  (e)=>{
             axios.get(`http://localhost:2122/product/sort/productsitems/${selectedCatageory}/${e.target.id}`).then((response)=> setAllProducts(response.data)).catch((error)=>setEmptyProductError(error.response.data.message));
-            console.log(count)
+            console.log(allProducts)
             if(count==0){
                 a="popularity"
                 b=a;
@@ -112,7 +54,6 @@ const AllItems = props => {
                 setActiveSortOption(a);
             }
             else{
-                console.log(a)
                 b=activeSortOption;
                 a=e.target.id;
                 document.getElementById(b).className="view-item-inactive";

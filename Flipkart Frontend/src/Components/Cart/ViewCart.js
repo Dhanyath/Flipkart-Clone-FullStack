@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import './ViewCart.css'
+import '../Styles/ViewCart.css'
 const ViewCart = props => {
    
     const [totalItems,setTotaItems]=useState(1);
@@ -12,18 +12,22 @@ const ViewCart = props => {
     // const allProduct=[location.state.selectedProduct];
     const [allProduct,setAllProducts]=useState([])
     const[cartItems,setCartItems]=useState({});
-    const [selectedProduct,setSelectedProduct]=useState()
-
+    const [selectedProduct,setSelectedProduct]=useState();
+    const [loadStatus,setLoadStatus]=useState(false);
     useEffect(()=>
     {
        allProduct.map((item)=>{
            cartItems[item.productId]=1;
        })
-       console.log(cartItems)
-       const productFInal={product:[{productId:1}],quantitySelected:cartItems[1]};
+    //    const productFInal={product:[{productId:1}],quantitySelected:cartItems[1]};
+    setTotaItems(Object.keys(cartItems).length);
+       setLoadStatus(!loadStatus);
     },[]);
-    useEffect((products)=>{
-        axios.get(`http://localhost:2122/all/cart/details/${9652712157}`).then((response)=>setAllProducts(response.data.cart))
+    useEffect( ()=>{
+        const load=async ()=>{
+           await axios.get(`http://localhost:2122/all/cart/details/${9652712158}`).then((response)=>setAllProducts(response.data.cart),setLoadStatus(!loadStatus))
+        }
+      load();
     },[])
     useEffect(()=>{
         Object.keys(cartItems).map((key)=>{
@@ -36,32 +40,33 @@ const ViewCart = props => {
         })
        ;
 
-    },[cartItems])
+    },[loadStatus])
     
     const ItemIncrement=((e)=>{
         const tempId=e.target.id;
         const tempProduct={...cartItems}
         if(tempId in cartItems){
-            if(tempProduct[tempId]<5)
+            if(tempProduct[tempId]<5){
                 tempProduct[e.target.id]+=1;
-                setTotaItems(totalItems+1);
+                allProduct.filter((item)=>item.productId==tempId)[0].quantitySelected+=1;
+            }
         }
         else if(tempProduct[tempId]){
+            allProduct.filter((item)=>item.productId==tempId)[0].quantitySelected+=1;
             tempProduct[e.target.id]=1;
-
-            setTotaItems(totalItems+1);
         }
         setCartItems(tempProduct)
+        setLoadStatus(!loadStatus)
        
     });
     const ItemDecrement=((e)=>{
         const tempId=e.target.id;
         const tempProduct={...cartItems}
-      
             if(tempProduct[tempId]>1){
+                allProduct.filter((item)=>item.productId==tempId)[0].quantitySelected-=1;
                 tempProduct[tempId]-=1;
-                setCartItems(tempProduct)
-
+                setCartItems(tempProduct);
+                setLoadStatus(!loadStatus);
             }
     });
     return (
@@ -70,7 +75,7 @@ const ViewCart = props => {
             <div className='view-cart-main-body-left-part'>
                     <div className='view-cart-main-body-left-part-head'>
                         <div >
-                            <a ><div className='view-cart-service'>Flipkart (1)</div></a>
+                            <a ><div className='view-cart-service'>Flipkart ({totalItems})</div></a>
                         </div>
                         <div>
                         <a style={{cursor:"pointer"}}>Grocery</a>

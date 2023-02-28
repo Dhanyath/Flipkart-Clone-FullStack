@@ -1,11 +1,11 @@
 import React from 'react';
-import NavBar from './NavBar';
-import Header from './Header';
-import MidSlide from './MidSlide';
+import NavBar from './Child/NavBar';
+import Header from '../Header/Header';
+import MidSlide from './Child/MidSlide';
 import { Box, makeStyles } from '@material-ui/core';
-import MidSection from './MidSection';
-import Banner from './Banner';
-import Slide from './Slide';
+import MidSection from './Child/MidSection';
+import Banner from './Child/Banner';
+import Slide from './Child/Slide';
 
 
 const useStyle = makeStyles({
@@ -78,7 +78,6 @@ const Home = props => {
     const products = dealData;
     return (
         <>
-            {/* <Cateline/> */}
             <NavBar />
             <Box className={classes.component}>
                 <Banner />

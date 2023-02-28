@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { AppBar, Box, Button,Link, makeStyles, Toolbar, Typography, withStyles,Badge } from '@material-ui/core';
-import Search from './Search';
 import { ShoppingCart } from '@material-ui/icons';
-import "./Loginform.css"
+import "../Styles/Loginform.css"
 import axios from 'axios';
 
 import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Search from './Search';
 
 const useStyle = makeStyles(theme => ({
     header: {
@@ -89,17 +89,23 @@ const ToolBar = withStyles({
 
 const Header = () => {
     const classes = useStyle();
-    const [otpDisplayProperty,setOtpDisplayProperty]=useState("")
-    const [signupDisplayProperty,setSignupDisplayProperty]=useState("")
-    const [loginError,setLoginError]=useState("")
+    const [otpDisplayProperty,setOtpDisplayProperty]=useState("");
+    const [signupDisplayProperty,setSignupDisplayProperty]=useState("");
+    const [loginError,setLoginError]=useState("");
     const [loginStatus,setLoginStatus]=useState(false);
-    const [badgeNumber,setBadgeNumber]=useState(0)
+    const [badgeNumber,setBadgeNumber]=useState(0);
+
     const logoURL = 'https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/flipkart-plus_8d85f4.png';
     const subURL = 'https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/plus_aef861.png';
 
     const [loginDetails,setLoginDetails]=useState({
         phoneNumber:'',
         password:''
+    })
+
+    const [signUpDetails,setSignUpDetails]=useState({
+    phoneNumber:'',
+    password:''
     })
 
     useEffect(()=>{
@@ -113,26 +119,47 @@ const Header = () => {
             setBadgeNumber(0);
         }
         else{
-            axios.get(`http://localhost:2122/all/cart/details/${9652712157}`).then((response)=>setBadgeNumber(response.data.cart.length))
+            axios.get(`http://localhost:2122/all/cart/details/${9652712158}`).then((response)=>setBadgeNumber(response.data.cart.length))
         }
-
-       
-      
-
     },[loginStatus])
-  
-  
     const changeHandler= (e)=>{
-       setLoginDetails({...loginDetails,[e.target.name]:e.target.value})
-     
+       setLoginDetails({...loginDetails,[e.target.name]:e.target.value});
     }
-    console.log(loginDetails)
+
+    const signUpChangeHandler=(e)=>{
+        setSignUpDetails({...signUpDetails,[e.target.name]:e.target.value});
+    }
     const getLogIn=async()=>{
-        if(loginDetails.phoneNumber==""){
-           
+        const loginMatch=/[6-9]{1}[\d]{9}/;
+        if(loginDetails.phoneNumber=="" || !loginMatch.test(loginDetails.phoneNumber)){
+            toast.warn("Please Enter Valid MobileNumber", {
+                position:"bottom-center",
+                 autoClose: 2500,
+                 hideProgressBar: true,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+                 theme: "colored",
+                   style:{width:"30rem",
+                   fontSize:"12px",
+                   background:'#39393a'
+                 }
+               })   
         }
         else if(loginDetails.password==""){
-
+            toast.warn("Please Enter Password", {
+                position:"bottom-center",
+                 autoClose: 2500,
+                 hideProgressBar: true,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+                 theme: "colored",
+                   style:{width:"30rem",
+                   fontSize:"12px",
+                   background:'#39393a'
+                 }
+               })   
         }
         else{
           await  axios.post(`http://localhost:2122/user/login`,loginDetails).then((response)=>{if(response.data){
@@ -144,21 +171,68 @@ const Header = () => {
                 pauseOnHover: true,
                 draggable: true,
                 theme: "colored",
+               
               });
-
             setLoginStatus(true)
             document.getElementById("flipkart-practice").style.display="none";
             localStorage.setItem("loginstatus",true);
             localStorage.setItem("phonenumber",loginDetails.phoneNumber);
         }})
-        .catch((error)=>setLoginError(error.response.data.message))
-            console.log(loginStatus )
+        .catch((error)=>(setLoginError(error.response.data.message), 
+        toast.error(error.response.data.message, {
+           position:"bottom-center",
+            autoClose: 2500,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+              style:{width:"30rem",
+              fontSize:"12px",
+            }
+          })))
         }
-      
     };
-    const popupChanges=()=>{
+    const getSignUp=async (e)=>{
+        if(signUpDetails.password==""){
+            toast.warn("Please Enter Password", {
+                position:"bottom-center",
+                 autoClose: 2500,
+                 hideProgressBar: true,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+                 theme: "colored",
+                   style:{width:"30rem",
+                   fontSize:"12px",
+                   background:'#39393a'
+                 }
+               })  
+        }
+        else{
+            await axios.post("http://localhost:2122/addNewUser",signUpDetails).then((response)=>console.log(response.data))
+            setSignupDisplayProperty("none");
+        setOtpDisplayProperty("");
+        document.getElementById("flipkart-login-form").style.display="block";
+        document.getElementById("flipkart-login-left-part").style.display="block";
+        document.getElementById("flipkart-login-left-part-signup").style.display="none";
         console.log(otpDisplayProperty)
         console.log(signupDisplayProperty)
+            toast.success("Account Created Successfully", {
+                position:"bottom-center",
+                 autoClose: 2500,
+                 hideProgressBar: true,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+                 theme: "colored",
+                   style:{width:"30rem",
+                   fontSize:"12px"
+                 }
+               })  
+        }
+    }
+    const popupChanges=()=>{
         document.getElementById("flipkart-login-left-part").style.display="none";
         document.getElementById("flipkart-login-left-part-signup").style.display="block";
         document.getElementById("flipkart-login-form").style.display="none";
@@ -166,12 +240,27 @@ const Header = () => {
     }
   
     const otpPopChanges=()=>{
-        setSignupDisplayProperty("none")
-        setOtpDisplayProperty("block")
-        
-        document.getElementById("flipkart-login-form").style.display="none";
-        console.log(otpDisplayProperty)
-        console.log(signupDisplayProperty)
+        const loginMatch=/[6-9]{1}[\d]{9}/;
+        if(!loginMatch.test(signUpDetails.phoneNumber)){
+            toast.warn("Please Enter Valid MobileNumber", {
+                position:"bottom-center",
+                 autoClose: 2500,
+                 hideProgressBar: true,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+                 theme: "colored",
+                   style:{width:"30rem",
+                   fontSize:"12px",
+                   background:'#39393a'
+                 }
+               })   
+        }
+        else{
+            setSignupDisplayProperty("none")
+            setOtpDisplayProperty("block")
+            document.getElementById("flipkart-login-form").style.display="none";    
+        }
     }
     const loginPopUpChanges=()=>{
         setSignupDisplayProperty("")
@@ -200,12 +289,10 @@ const Header = () => {
         document.getElementById("flipkart-practice").style.display="none";
     }
     const loginChange=()=>{
-    
-        window.scroll(0, window.scrollY)
+        // window.scroll(0, window.scrollY)
         document.getElementById("flipkart-practice").style.display="block"
     }
     const logOut=()=>{
-        console.log("hello")
         localStorage.removeItem("loginstatus")
         window.location.reload()
     }
@@ -223,7 +310,6 @@ const Header = () => {
                 <Search />
                 <div className={classes.wrapper}>
                    {loginStatus? 
-                //   <div> <a style={{fontSize:"15px",fontWeight:"500",marginTop:"0.4rem",cursor:"pointer"}}>My Account</a>
                    <div class="dropdown">
                         <button class="dropbtn">My Account</button>
                         <div class="dropdown-content">
@@ -237,7 +323,7 @@ const Header = () => {
                     <Link>
                         <Typography style={{ marginTop: 2 }}>More</Typography>
                     </Link>
-                    <Link to='/' className={classes.container}>
+                    <Link to='/cart' className={classes.container}>
                         <Badge badgeContent={badgeNumber} color="secondary">
                             <ShoppingCart />
                         </Badge>
@@ -263,9 +349,7 @@ const Header = () => {
         <div className='flipkart-practice' id="flipkart-practice" >
         <div className="flipkart-login-formpopup" id="flipkart-login-formpopup" >
               <div className="filpkart-login-close-button"><button type="button" className="btn" onClick={loginFormClose}><span style={{fontSize:"30px",color:"white"}}>✕</span></button></div>
-              
             <div className="view-cart-row">
-                
             <div className="leftspace">
                   <div className="flipkart-login-left-part" id="flipkart-login-left-part"><h2>Login</h2>
                 <p>Get access to your Orders, Wishlist and Recommendations</p>
@@ -273,15 +357,11 @@ const Header = () => {
               <div className="flipkart-login-left-part-signup" id="flipkart-login-left-part-signup"><h2 style={{fontSize:"25px",fontWeight:"600"}}>Looks like you're new here!</h2>
                 <p>Sign up with your mobile number to get started</p>
               </div>
-                </div>
-             
-              
-              <div className="rightspace">
+            </div>
+            <div className="rightspace">
                 <div className="loginInputContainer">
-                  {/* {auth.error && (
-                    <div style={{ color: "red", fontSize: 12 }}>{auth.error}</div>
-                  )} */}
                   <br/><br/>
+                  {/*Logiin Using Mobile Number and Password*/}
                   <div className="flipkart-login-form" id="flipkart-login-form">
                             <form >
                                     <small>Enter Mobile Number</small>
@@ -291,7 +371,9 @@ const Header = () => {
                                     value={loginDetails.phoneNumber}
                                     name="phoneNumber"
                                     onChange={(e)=>changeHandler(e)}
-                                    onKeyDown={()=>setLoginError("")} required
+                                    maxLength={10}
+                                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                                    required
                                     ></input>
                                     <br></br>
                                    <small>Enter Password</small>
@@ -303,8 +385,6 @@ const Header = () => {
                                     onChange={(e)=>changeHandler(e)}
                                     onKeyDown={()=>setLoginError("")}
                                     required />
-    
-                                    {loginError}
                                     <br></br>
                                     <p className="flipkart-tagline" style={{fontSize:12}}>By continuing, you agree to Flipkart's Terms of Use and Privacy Policy.</p>
                                 <button type="button" className="flipkart-login-button" onClick={(e)=>getLogIn(e)}>Login</button>
@@ -315,21 +395,26 @@ const Header = () => {
                                 <div className="flipkart-new-user-tag"><p onClick={popupChanges}>New to Flipkart? Create an account</p></div>
                     
                      </div>
+                     {/*User Signup Form*/}
                      <div className="flipkart-login-form1-signup" id="flipkart-login-form1-signup" style={{display:signupDisplayProperty}}>
                             <form>
                                     <small>Enter Mobile Number</small>
                                     <input
                                     className="login-inputfields"
                                     type="text"
+                                    value={signUpDetails.phoneNumber}
+                                    name="phoneNumber"
+                                    maxLength={10}
+                                    onChange={(e)=>signUpChangeHandler(e)}
                                     required/>
                                    <br/><br/>
-                                    {/* <p className="flipkart-tagline" style={{fontSize:12}}>OTP Sent</p> */}
-                                <button type="button" className="flipkart-continue-button" onClick={otpPopChanges}>Continue</button>
+                                   <button type="button" className="flipkart-continue-button" onClick={otpPopChanges}>Continue</button>
                             </form>
                             <div><button type="button" className="flipkart-existing-user-button" ><span onClick={loginPopUpChangesinOtPage}>Existing User? Login</span></button>
                             <br></br>
                             </div>
                      </div>
+                     {/*User Signup Otp Verification */}
                      <div className="flipkart-login-form2-otp-page"  id="flipkart-login-form2-otp-page" style={{display:otpDisplayProperty}}>
                             <form >
                             <small>Enter Mobile Number</small>
@@ -337,26 +422,31 @@ const Header = () => {
                                     className="login-inputfields"
                                     type="text"
                                     label="First Name"
-                                     readOnly/>
+                                    value={signUpDetails.phoneNumber}
+                                    maxLength={10}
+                                    readOnly/>
                                    <br></br><br></br>
                                    <div className="flipkart-otp-sent-tagline">   
-                                       <p  style={{fontSize:14}}>OTP Sent to Mobile<span style={{marginLeft:"9rem"}} ><a>Resend?</a></span></p>
+                                   <p  style={{fontSize:14}}>OTP Sent to Mobile<span style={{marginLeft:"9rem"}} ><a>Resend?</a></span></p>
                                 </div>
                                 <small>Enter OTP</small>
                                 <input
                                     className="login-inputfields"
                                     type="text"
                                     label="Enter OTP"
-                                    required   />
+                                    required readOnly  value={1234}/>
                                 <br></br><br></br>
                                 <small>Set Password</small>
                                 <input
                                     className="login-inputfields"
                                     type="password"
                                     label="Set Password"
+                                    value={signUpDetails.password}
+                                    name="password"
+                                    onChange={(e)=>signUpChangeHandler(e)}
                                     required  />
                                  <br/><br/><br/>
-                                   <button type="button" className="flipkart-signup-button" style={{fontSize:"16px"}}>SignUp</button>
+                                   <button type="button" className="flipkart-signup-button" style={{fontSize:"16px"}} onClick={(e)=>getSignUp(e)}>SignUp</button>
                             </form>
                             <div><button type="button" className="flipkart-existing-user-button" ><span onClick={loginPopUpChanges}>Existing User? Login</span></button>
                             <br></br>

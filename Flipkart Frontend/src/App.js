@@ -1,13 +1,12 @@
 
 import './App.css';
-import Header from './Components/LandingPage/Header';
-import { Cateline } from './Components/LandingPage/Catadiv';
+import Header from './Components/Header/Header';
 import Home from './Components/LandingPage/Home';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Footer } from './Components/LandingPage/Footer';
-import ViewProduct from './Components/LandingPage/ViewProduct';
-import AllItems from './Components/LandingPage/AllItems';
-import ViewCart from './Components/LandingPage/ViewCart';
+import ViewProduct from './Components/Products/ViewProduct';
+import AllItems from './Components/Products/AllItems';
+import ViewCart from './Components/Cart/ViewCart';
+import { Footer } from './Components/Footer/Footer';
 
 function App() {
   const products=[];
